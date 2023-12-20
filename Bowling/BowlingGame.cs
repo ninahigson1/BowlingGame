@@ -12,5 +12,16 @@ namespace Bowling
         {
             return 300;
         }
+
+        public int CalculateScoreForRound(string score)
+        {
+            switch (score.ToLower())
+            {
+                case "x":
+                    return 10;
+                default:
+                    return 0;
+            }
+        }
     }
 }
