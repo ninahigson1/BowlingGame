@@ -4,15 +4,26 @@ namespace BowlingTests
 {
     public class BowlingTests
     {
-	    [Test]
-        public void GivenBowlingAlley_WhenPerfectGame_PlayerGets300Points()
+		[TestCase("X X X X X X X X X X X X")]
+		public void GivenBowlingAlley_WhenPerfectGame_PlayerGets300Points(string scores)
         {
             var bowlingGame = new BowlingGame();
-            var score = bowlingGame.GetScore();
+            var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
+            var score = bowlingGame.GetScore(listOfScores);
             Assert.That(score, Is.EqualTo(300));
         }
 
-        [TestCase("x")]
+		[TestCase("9- 9- 9- 9- 9- 9- 9- 9- 9- 9-", 90)]
+		[TestCase("52 45 12 13 14 15 15 22 23 5-", 54)]
+		public void GivenBowlingAlley_WhenNoStrikesOrSpares_PlayerGetsCorrectPoints(string scores, int expectedScore)
+		{
+			var bowlingGame = new BowlingGame();
+			var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
+			var score = bowlingGame.GetScore(listOfScores);
+			Assert.That(score, Is.EqualTo(expectedScore));
+		}
+
+		[TestCase("x")]
         [TestCase("X")]
         public void GivenBowlingAlley_WhenPlayerGetAStrike_Return10(string score)
         {
@@ -29,7 +40,6 @@ namespace BowlingTests
 	        var bowlingGame = new BowlingGame();
             var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
             Assert.That(listOfScores.Count, Is.EqualTo(10));
-            //a method that splits the scores based on space but then for the 10th frame joins 3?
 
         }
     }

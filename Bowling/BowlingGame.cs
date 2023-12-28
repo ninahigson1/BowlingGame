@@ -8,9 +8,31 @@ namespace Bowling
 {
     public class BowlingGame
     { 
-        public int GetScore()
+        public int GetScore(List<string> frameScores)
         {
-            return 300;
+	        var runningTotal = 0;
+			// think we would need a way to calculate score per frame
+			foreach (var score in frameScores)
+	        {
+		        if (score.ToLower() == "x")
+		        {
+			        runningTotal += CalculateScoreForRound(score);
+		        }
+		        if (score.Contains("/"))
+		        {
+					//Calculate score for a strike
+					runningTotal+= CalculateScoreForRound(score);
+		        }
+		        else
+		        {
+			        var throwScores = score.ToCharArray();
+			        foreach (var i in throwScores)
+			        {
+				        runningTotal+= CalculateScoreForRound(i.ToString());
+			        }
+		        }
+	        }
+            return runningTotal;
         }
 
         public int CalculateScoreForRound(string score)
@@ -18,9 +40,13 @@ namespace Bowling
             switch (score.ToLower())
             {
                 case "x":
-                    return 10;
+                    return 10; //Plus some bonus stuff
+				case "/":
+					return 10; //maybe more bonus stuff
+				case "-":
+					return 0;
                 default:
-                    return 0;
+                    return int.Parse(score);
             }
         }
 
