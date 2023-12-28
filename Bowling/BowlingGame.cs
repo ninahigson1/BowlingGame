@@ -23,5 +23,19 @@ namespace Bowling
                     return 0;
             }
         }
-    }
+
+		public List<string> SplitScoresIntoFrames(string scores)
+		{
+			var frameScores = scores.Split(' ').ToList();
+			if (frameScores.Count == 12)
+			{
+				var scoreForFrame10 = frameScores[9] + frameScores[10] + frameScores[11];
+				frameScores.RemoveAt(11);
+				frameScores.RemoveAt(10);
+				frameScores.RemoveAt(9);
+				frameScores.Add(scoreForFrame10);
+			}
+			return frameScores;
+		}
+	}
 }
