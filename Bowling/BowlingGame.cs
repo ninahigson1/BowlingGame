@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Bowling
+﻿namespace Bowling
 {
     public class BowlingGame
     { 
@@ -17,7 +11,19 @@ namespace Bowling
 			for(var i = 0; i < frameScores.Count; i++)
 			{
 				// we'll be able to identify each round by its index, e.g. frameScore[i],
-				runningTotal += CalculateScoreForRound(frameScores[i]);
+				if (frameScores[i].ToLower() == "x" || frameScores[i].Contains("/"))
+				{
+					runningTotal += CalculateScoreForRound(frameScores[i]);
+				}
+				else
+				{
+					var throwScores = frameScores[i].ToCharArray();
+					foreach (var score in throwScores)
+					{
+						runningTotal += CalculateScoreForRound(score.ToString());
+					}
+				}
+
 				bonus += CalculateBonus(frameScores[i]);
 				if(i == 8) // 8 because 0 based (would be 9 in real terms)
 				{
@@ -37,7 +43,9 @@ namespace Bowling
 				}
 				else if(i == 9)
 				{
-					var scoresForFinalFrame = frameScores[i].ToLower().Split('x');
+					var scoresForFinalFrame = frameScores[i].ToLower().Split('x'); 
+					//ToLower doesn't work here and it's splitting XXX into a list of 4 ""
+
 					if(scoresForFinalFrame.Length == 3)
 					{
 						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
@@ -56,15 +64,17 @@ namespace Bowling
 					}
 					else
 					{
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
+						var finalRoundScoresTwoThrowsOnly = scoresForFinalFrame[0].ToCharArray();
+						bonusFrameScore = CalculateBonusScoreForFrame(bonus, finalRoundScoresTwoThrowsOnly[0].ToString(), finalRoundScoresTwoThrowsOnly[1].ToString());
 					}
 				}
 				else
 				{
 					bonusFrameScore = CalculateBonusScoreForFrame(bonus, frameScores[i + 1], frameScores[i + 2]);
-					bonus = 0;
 				}
 				runningTotal += bonusFrameScore;
+				bonus = 0;
+				bonusFrameScore = 0;
 			}
             return runningTotal;
         }
@@ -86,26 +96,19 @@ namespace Bowling
 						bonusScore += CalculateScoreForRound(nextNextFrame?[0].ToString().ToLower());//5
 						return bonusScore; //15 
 					}
-					else
+
+					if (nextFrame.Contains('/'))
 					{
-						if (nextFrame.Contains("/"))
-						{
-							return 10;
-						}
-						else
-						{
-							bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow); 
-							bonusScore += CalculateScoreForRound(nextFrame[1].ToString()); 
-							return bonusScore;
-						}
+						return 10;
 					}
+
+					bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow); 
+					bonusScore += CalculateScoreForRound(nextFrame[1].ToString()); 
+					return bonusScore;
 				default:
 					return 0;
 			}
-            
 			
-            // todo if bonus score of 2, then either take both scores from nextFrame
-            // or potentially take the first of nextNextFrame if they get a strike
         }
 
         public int CalculateScoreForRound(string? score)
@@ -113,9 +116,9 @@ namespace Bowling
             switch (score?.ToLower())
             {
                 case "x":
-                    return 10; //Plus some bonus stuff
+                    return 10;
 				case "/":
-					return 10; //maybe more bonus stuff
+					return 10;
 				case "-":
 				case null:
 					return 0;
