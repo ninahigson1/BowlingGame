@@ -1,4 +1,6 @@
-﻿namespace Bowling
+﻿using System.Linq;
+
+namespace Bowling
 {
     public class BowlingGame
     { 
@@ -11,7 +13,7 @@
 			for(var i = 0; i < frameScores.Count; i++)
 			{
 				// we'll be able to identify each round by its index, e.g. frameScore[i],
-				if (frameScores[i].ToLower() == "x" || frameScores[i].Contains("/"))
+				if (frameScores[i].ToLower() == "x" || (frameScores[i].Length == 2 && frameScores[i].Contains("/")))
 				{
 					runningTotal += CalculateScoreForRound(frameScores[i]);
 				}
@@ -20,7 +22,29 @@
 					var throwScores = frameScores[i].ToCharArray();
 					foreach (var score in throwScores)
 					{
+						if (throwScores[2] == '/')
+						{
+							//ignore first score
+							//second is 10
+							//add third
+						}
 						runningTotal += CalculateScoreForRound(score.ToString());
+					}
+
+					for(int j = 0; j < throwScores.Length; j++)
+					{
+						if (throwScores[1] == '/')
+						{
+							if(j == 0)
+							{
+								break;
+							}
+							runningTotal += CalculateScoreForRound(throwScores[j].ToString());
+						}
+						else
+						{
+							runningTotal += CalculateScoreForRound(throwScores[j].ToString());
+						}
 					}
 				}
 
@@ -28,9 +52,9 @@
 				if(i == 8) // 8 because 0 based (would be 9 in real terms)
 				{
                     //if it contains a x or / then do something special, otherwise that's all that g
-                    if (frameScores[i + 1].Contains("x") || frameScores[i + 1].Contains("/"))
+                    if (frameScores[i + 1].Contains("x"))
 					{
-						if (frameScores[i + 1][0].ToString() == "x")
+						if (frameScores[i + 1][0].ToString() == "x") 
 						{
 							var scoresForFinalFrame = frameScores[i + 1].ToCharArray().Select(x => x.ToString()).ToList();
 								//.Split("x");
@@ -118,7 +142,7 @@
             {
                 case "x":
                     return 10;
-				case "/":
+				case string spare when spare.Contains ("/"):
 					return 10;
 				case "-":
 				case null:
@@ -134,7 +158,7 @@
 			{
 				return 2;
 			}
-			else if (score == "/")
+			else if (score.Contains("/"))
 			{
 				return 1;
 			}

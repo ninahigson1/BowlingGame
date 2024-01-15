@@ -15,7 +15,9 @@ namespace BowlingTests
 
 		[TestCase("9- 9- 9- 9- 9- 9- 9- 9- 9- 9-", 90)]
 		[TestCase("52 45 12 13 14 15 15 22 23 5-", 54)]
-		public void GivenBowlingAlley_WhenNoStrikesOrSpares_PlayerGetsCorrectPoints(string scores, int expectedScore)
+        [TestCase("X X X X X X X X X X X X", 300)]
+        [TestCase("5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/5", 150)]
+        public void GivenBowlingAlley_WhenNoStrikesOrSpares_PlayerGetsCorrectPoints(string scores, int expectedScore)
 		{
 			var bowlingGame = new BowlingGame();
 			var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
