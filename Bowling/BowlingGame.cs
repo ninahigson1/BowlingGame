@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Bowling
+﻿namespace Bowling
 {
     public class BowlingGame
     { 
@@ -12,24 +10,13 @@ namespace Bowling
 
 			for(var i = 0; i < frameScores.Count; i++)
 			{
-				// we'll be able to identify each round by its index, e.g. frameScore[i],
-				if (frameScores[i].ToLower() == "x" || (frameScores[i].Length == 2 && frameScores[i].Contains("/")))
+				if (frameScores[i].ToLower() == "x" || (frameScores[i].Length == 2 && frameScores[i].Contains('/')))
 				{
 					runningTotal += CalculateScoreForRound(frameScores[i]);
 				}
 				else
 				{
 					var throwScores = frameScores[i].ToCharArray();
-					foreach (var score in throwScores)
-					{
-						if (throwScores[2] == '/')
-						{
-							//ignore first score
-							//second is 10
-							//add third
-						}
-						runningTotal += CalculateScoreForRound(score.ToString());
-					}
 
 					for(int j = 0; j < throwScores.Length; j++)
 					{
@@ -37,7 +24,7 @@ namespace Bowling
 						{
 							if(j == 0)
 							{
-								break;
+								continue; //essentially ignore first score as we handle a spare separately.
 							}
 							runningTotal += CalculateScoreForRound(throwScores[j].ToString());
 						}
@@ -51,13 +38,11 @@ namespace Bowling
 				bonus += CalculateBonus(frameScores[i]);
 				if(i == 8) // 8 because 0 based (would be 9 in real terms)
 				{
-                    //if it contains a x or / then do something special, otherwise that's all that g
-                    if (frameScores[i + 1].Contains("x"))
+					if (frameScores[i + 1].Contains("x"))
 					{
 						if (frameScores[i + 1][0].ToString() == "x") 
 						{
 							var scoresForFinalFrame = frameScores[i + 1].ToCharArray().Select(x => x.ToString()).ToList();
-								//.Split("x");
 							bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
 						}
 					}
@@ -68,30 +53,14 @@ namespace Bowling
 				}
 				else if(i == 9)
 				{
-					var scoresForFinalFrame = frameScores[i].ToCharArray(); 
-					//ToLower doesn't work here and it's splitting XXX into a list of 4 ""
+					var scoresForFinalFrame = frameScores[i].ToCharArray();
 
 					if(scoresForFinalFrame.Length == 3)
 					{
-						return runningTotal; // Thinking we might not need to do any bonus stuff for final frame
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
-						if (scoresForFinalFrame[2].Equals('x') || scoresForFinalFrame[2].Equals('/'))
-						{
-							bonusFrameScore += 10;
-						}
-						else if (scoresForFinalFrame[2].Equals('-'))
-						{
-							bonusFrameScore += 0;
-						}
-						else
-						{
-							bonusFrameScore += int.Parse(scoresForFinalFrame[2].ToString());
-						}
+						return runningTotal;
 					}
-					else
-					{
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
-					}
+
+					bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
 				}
 				else
 				{
@@ -106,8 +75,7 @@ namespace Bowling
 
         private int CalculateBonusScoreForFrame(int bonus, string nextFrame, string? nextNextFrame)
         {
-            var bonusScore = 0;
-            var nextFrameScoreFirstThrow = "";
+	        string nextFrameScoreFirstThrow = "";
 			switch(bonus)
 			{
 				case 1:
@@ -115,6 +83,7 @@ namespace Bowling
 					return CalculateScoreForRound(nextFrameScoreFirstThrow);
 				case 2:
 					nextFrameScoreFirstThrow = nextFrame[0].ToString();
+					var bonusScore = 0;
 					if(nextFrameScoreFirstThrow == "x")
 					{
 						bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow); //10
@@ -158,12 +127,8 @@ namespace Bowling
 			{
 				return 2;
 			}
-			else if (score.Contains("/"))
-			{
-				return 1;
-			}
-			else
-				return 0;
+
+			return score.Contains("/") ? 1 : 0;
 		}
 
 		public List<string> SplitScoresIntoFrames(string scores)
