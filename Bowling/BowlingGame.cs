@@ -30,9 +30,10 @@
                     //if it contains a x or / then do something special, otherwise that's all that g
                     if (frameScores[i + 1].Contains("x") || frameScores[i + 1].Contains("/"))
 					{
-						if (frameScores[i + 1][0].ToString().ToLower() == "x")
+						if (frameScores[i + 1][0].ToString() == "x")
 						{
-							var scoresForFinalFrame = frameScores[i+1].ToLower().Split('x');
+							var scoresForFinalFrame = frameScores[i + 1].ToCharArray().Select(x => x.ToString()).ToList();
+								//.Split("x");
 							bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
 						}
 					}
@@ -43,29 +44,29 @@
 				}
 				else if(i == 9)
 				{
-					var scoresForFinalFrame = frameScores[i].ToLower().Split('x'); 
+					var scoresForFinalFrame = frameScores[i].ToCharArray(); 
 					//ToLower doesn't work here and it's splitting XXX into a list of 4 ""
 
 					if(scoresForFinalFrame.Length == 3)
 					{
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
-						if (scoresForFinalFrame[2].ToLower().Equals("x") || scoresForFinalFrame[2].ToLower().Equals("/"))
+						return runningTotal; // Thinking we might not need to do any bonus stuff for final frame
+						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
+						if (scoresForFinalFrame[2].Equals('x') || scoresForFinalFrame[2].Equals('/'))
 						{
 							bonusFrameScore += 10;
 						}
-						else if (scoresForFinalFrame[2].Equals("-"))
+						else if (scoresForFinalFrame[2].Equals('-'))
 						{
 							bonusFrameScore += 0;
 						}
 						else
 						{
-							bonusFrameScore += int.Parse(scoresForFinalFrame[2]);
+							bonusFrameScore += int.Parse(scoresForFinalFrame[2].ToString());
 						}
 					}
 					else
 					{
-						var finalRoundScoresTwoThrowsOnly = scoresForFinalFrame[0].ToCharArray();
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, finalRoundScoresTwoThrowsOnly[0].ToString(), finalRoundScoresTwoThrowsOnly[1].ToString());
+						bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
 					}
 				}
 				else
@@ -86,14 +87,14 @@
 			switch(bonus)
 			{
 				case 1:
-					nextFrameScoreFirstThrow = nextFrame[0].ToString().ToLower();
+					nextFrameScoreFirstThrow = nextFrame[0].ToString();
 					return CalculateScoreForRound(nextFrameScoreFirstThrow);
 				case 2:
-					nextFrameScoreFirstThrow = nextFrame[0].ToString().ToLower();
+					nextFrameScoreFirstThrow = nextFrame[0].ToString();
 					if(nextFrameScoreFirstThrow == "x")
 					{
 						bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow); //10
-						bonusScore += CalculateScoreForRound(nextNextFrame?[0].ToString().ToLower());//5
+						bonusScore += CalculateScoreForRound(nextNextFrame?[0].ToString());//5
 						return bonusScore; //15 
 					}
 
@@ -113,7 +114,7 @@
 
         public int CalculateScoreForRound(string? score)
         {
-            switch (score?.ToLower())
+            switch (score)
             {
                 case "x":
                     return 10;
@@ -129,11 +130,11 @@
 
 		public int CalculateBonus(string score)
 		{
-			if (score.ToLower() == "x")
+			if (score == "x")
 			{
 				return 2;
 			}
-			else if (score.ToLower() == "/")
+			else if (score == "/")
 			{
 				return 1;
 			}
@@ -143,6 +144,7 @@
 
 		public List<string> SplitScoresIntoFrames(string scores)
 		{
+			scores = scores.ToLowerInvariant();
 			var frameScores = scores.Split(' ').ToList();
 			if (frameScores.Count == 12)
 			{

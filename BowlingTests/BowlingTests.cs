@@ -24,8 +24,7 @@ namespace BowlingTests
 		}
 
 		[TestCase("x")]
-        [TestCase("X")]
-        public void GivenBowlingAlley_WhenPlayerGetAStrike_Return10(string score)
+		public void GivenBowlingAlley_WhenPlayerGetAStrike_Return10(string score)
         {
             var bowlingGame = new BowlingGame();
             var roundScore = bowlingGame.CalculateScoreForRound(score);
@@ -35,7 +34,7 @@ namespace BowlingTests
         [TestCase("X X X X X X X X X X X X")]
         [TestCase("9- 9- 9- 9- 9- 9- 9- 9- 9- 9-")]
         [TestCase("5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/5")]
-		public void Given_TenFramesOfStrikes_ThenScoreIsCalculated(string scores)
+		public void GivenTenFramesOfScores_ThenScoreIsSplitIntoTenFrames(string scores)
         {
 	        var bowlingGame = new BowlingGame();
             var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
