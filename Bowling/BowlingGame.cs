@@ -10,31 +10,8 @@
 
 			for(var i = 0; i < frameScores.Count; i++)
 			{
-				if (frameScores[i].ToLower() == "x" || (frameScores[i].Length == 2 && frameScores[i].Contains('/')))
-				{
-					runningTotal += CalculateScoreForRound(frameScores[i]);
-				}
-				else
-				{
-					var throwScores = frameScores[i].ToCharArray();
-
-					for(int j = 0; j < throwScores.Length; j++)
-					{
-						if (throwScores[1] == '/')
-						{
-							if(j == 0)
-							{
-								continue; //essentially ignore first score as we handle a spare separately.
-							}
-							runningTotal += CalculateScoreForRound(throwScores[j].ToString());
-						}
-						else
-						{
-							runningTotal += CalculateScoreForRound(throwScores[j].ToString());
-						}
-					}
-				}
-
+                runningTotal += CalculateScoreForRound(frameScores[i]);
+                
 				bonus += CalculateBonus(frameScores[i]);
 				if(i == 8) // 8 because 0 based (would be 9 in real terms)
 				{
@@ -86,9 +63,9 @@
 					var bonusScore = 0;
 					if(nextFrameScoreFirstThrow == "x")
 					{
-						bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow); //10
-						bonusScore += CalculateScoreForRound(nextNextFrame?[0].ToString());//5
-						return bonusScore; //15 
+						bonusScore = CalculateScoreForRound(nextFrameScoreFirstThrow);
+						bonusScore += CalculateScoreForRound(nextNextFrame?[0].ToString());
+						return bonusScore;
 					}
 
 					if (nextFrame.Contains('/'))
@@ -105,38 +82,51 @@
 			
         }
 
-        public int CalculateScoreForRound(string? roundScore)
+        public int CalculateScoreForRound(string? round)
         {
-            if (roundScore == null)
-            {
-                return 0;
-            }
-            var throwScores = roundScore.ToCharArray();
+	        int roundScore = 0;
+	        if (round == null)
+	        {
+		        return roundScore;
+	        }
 
-			//thinking maybe we could handle the null explicitly first
+	        var throwScores = round.ToCharArray();
 
-            foreach (var score in throwScores)
-            {
-                //then maybe we call the method below in here
-            }
+	        for (int j = 0; j < throwScores.Length; j++)
+	        {
+		        if (throwScores.Length > 1 && throwScores[1] == '/')
+		        {
+			        if (j == 0)
+			        {
+				        continue; //essentially ignore first score as we handle a spare separately.
+			        }
 
+			        roundScore += CalculateScoreForThrow(throwScores[j].ToString());
+		        }
+		        else
+		        {
+			        roundScore += CalculateScoreForThrow(throwScores[j].ToString());
+		        }
+	        }
+	        return roundScore;
+		}
 
-			//maybe we strip this out into a separate method
+        private static int CalculateScoreForThrow(string roundScore)
+        {
             switch (roundScore)
             {
                 case "x":
-                    return 10;
-				case string spare when spare.Contains ("/"):
-					return 10;
-				case "-":
-				case null:
-					return 0;
+                case "/":
+	                return 10;
+                case "-":
+                case null:
+                    return 0;
                 default:
                     return int.Parse(roundScore);
             }
         }
 
-		public int CalculateBonus(string score)
+        public int CalculateBonus(string score)
 		{
 			if (score == "x")
 			{
