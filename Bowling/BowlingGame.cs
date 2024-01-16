@@ -105,9 +105,24 @@
 			
         }
 
-        public int CalculateScoreForRound(string? score)
+        public int CalculateScoreForRound(string? roundScore)
         {
-            switch (score)
+            if (roundScore == null)
+            {
+                return 0;
+            }
+            var throwScores = roundScore.ToCharArray();
+
+			//thinking maybe we could handle the null explicitly first
+
+            foreach (var score in throwScores)
+            {
+                //then maybe we call the method below in here
+            }
+
+
+			//maybe we strip this out into a separate method
+            switch (roundScore)
             {
                 case "x":
                     return 10;
@@ -117,7 +132,7 @@
 				case null:
 					return 0;
                 default:
-                    return int.Parse(score);
+                    return int.Parse(roundScore);
             }
         }
 
