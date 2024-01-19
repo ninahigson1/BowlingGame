@@ -35,7 +35,6 @@ namespace BowlingTests
 	        var bowlingGame = new BowlingGame();
             var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
             Assert.That(listOfScores.Count, Is.EqualTo(10));
-
         }
     }
 }

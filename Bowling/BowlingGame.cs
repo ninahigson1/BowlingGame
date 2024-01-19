@@ -5,49 +5,60 @@
         public int GetScore(List<string> frameScores)
         {
 	        var runningTotal = 0;
-			var bonus = 0;
-			var bonusFrameScore = 0;
-
+			var bonusThrowsToCalculate = 0;
+            
 			for(var i = 0; i < frameScores.Count; i++)
 			{
+                bonusThrowsToCalculate += CalculateBonusThrows(frameScores[i]);
                 runningTotal += CalculateScoreForRound(frameScores[i]);
-                
-				bonus += CalculateBonus(frameScores[i]);
-				if(i == 8) // 8 because 0 based (would be 9 in real terms)
-				{
-					if (frameScores[i + 1].Contains("x"))
-					{
-						if (frameScores[i + 1][0].ToString() == "x") 
-						{
-							var scoresForFinalFrame = frameScores[i + 1].ToCharArray().Select(x => x.ToString()).ToList();
-							bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0], scoresForFinalFrame[1]);
-						}
-					}
-					else
-					{
-						bonusFrameScore = CalculateBonusScoreForFrame(bonus, frameScores[i + 1], null);
-					}
-				}
-				else if(i == 9)
-				{
-					var scoresForFinalFrame = frameScores[i].ToCharArray();
-
-					if(scoresForFinalFrame.Length == 3)
-					{
-						return runningTotal;
-					}
-
-					bonusFrameScore = CalculateBonusScoreForFrame(bonus, scoresForFinalFrame[0].ToString(), scoresForFinalFrame[1].ToString());
-				}
-				else
-				{
-					bonusFrameScore = CalculateBonusScoreForFrame(bonus, frameScores[i + 1], frameScores[i + 2]);
-				}
-				runningTotal += bonusFrameScore;
-				bonus = 0;
-				bonusFrameScore = 0;
+				runningTotal += CalculateBonusScoreForRound(frameScores, i, bonusThrowsToCalculate);
+				bonusThrowsToCalculate = 0;
 			}
             return runningTotal;
+        }
+
+        private int CalculateBonusScoreForRound(List<string> frameScores, int i, int bonusThrowsToCalculate)
+        {
+            int bonusFrameScore = 0;
+            if (bonusThrowsToCalculate == 0)
+            {
+                return 0;
+            }
+            if (i == 8) // 8 because 0 based (would be 9 in real terms)
+            {
+                if (frameScores[i + 1].Contains("x"))
+                {
+                    if (frameScores[i + 1][0].ToString() == "x")
+                    {
+                        var scoresForFinalFrame = frameScores[i + 1].ToCharArray().Select(x => x.ToString()).ToList();
+                        bonusFrameScore = CalculateBonusScoreForFrame(bonusThrowsToCalculate, scoresForFinalFrame[0],
+                            scoresForFinalFrame[1]);
+                    }
+                }
+                else
+                {
+                    bonusFrameScore = CalculateBonusScoreForFrame(bonusThrowsToCalculate, frameScores[i + 1], null);
+                }
+            }
+            else if (i == 9)
+            {
+                var scoresForFinalFrame = frameScores[i].ToCharArray();
+                var score = 0;
+
+                if (scoresForFinalFrame.Length == 3)
+                {
+                    return score;
+                }
+
+                bonusFrameScore = CalculateBonusScoreForFrame(bonusThrowsToCalculate, scoresForFinalFrame[0].ToString(),
+                    scoresForFinalFrame[1].ToString());
+            }
+            else
+            {
+                bonusFrameScore = CalculateBonusScoreForFrame(bonusThrowsToCalculate, frameScores[i + 1], frameScores[i + 2]);
+            }
+
+            return bonusFrameScore;
         }
 
         private int CalculateBonusScoreForFrame(int bonus, string nextFrame, string? nextNextFrame)
@@ -126,7 +137,7 @@
             }
         }
 
-        public int CalculateBonus(string score)
+        public int CalculateBonusThrows(string score)
 		{
 			if (score == "x")
 			{
