@@ -121,7 +121,6 @@
 	        }
 	        return roundScore;
 		}
-
         private static int CalculateScoreForThrow(string roundScore)
         {
             switch (roundScore)
@@ -136,7 +135,6 @@
                     return int.Parse(roundScore);
             }
         }
-
         public int CalculateBonusThrows(string score)
 		{
 			if (score == "x")
@@ -146,8 +144,7 @@
 
 			return score.Contains("/") ? 1 : 0;
 		}
-
-		public List<string> SplitScoresIntoFrames(string scores)
+        public List<string> SplitScoresIntoFrames(string scores)
 		{
 			scores = scores.ToLowerInvariant();
 			var frameScores = scores.Split(' ').ToList();

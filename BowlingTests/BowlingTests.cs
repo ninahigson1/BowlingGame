@@ -8,7 +8,8 @@ namespace BowlingTests
 		[TestCase("52 45 12 13 14 15 15 22 23 5-", 54)]
         [TestCase("X X X X X X X X X X X X", 300)]
         [TestCase("5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/5", 150)]
-        public void GivenBowlingAlley_WhenProvidedAFullGameOfScores_PlayerGetsCorrectPoints(string scores, int expectedScore)
+		[TestCase("-- -- -- -- -- -- -- -- -- --", 0)]
+		public void GivenBowlingGame_WhenProvidedAFullGameOfScores_PlayerGetsCorrectPoints(string scores, int expectedScore)
 		{
 			var bowlingGame = new BowlingGame();
 			var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
@@ -20,7 +21,7 @@ namespace BowlingTests
         [TestCase("5/", 10)]
         [TestCase("5-", 5)]
         [TestCase("--", 0)]
-        public void GivenBowlingAlley_WhenPlayerGetAStrike_Return10(string score, int expectedRoundScore)
+        public void GivenBowlingGame_WhenThrowContainsANonNumericCharacter_CalculateTheScoreAsExpected(string score, int expectedRoundScore)
         {
             var bowlingGame = new BowlingGame();
             var roundScore = bowlingGame.CalculateScoreForRound(score);
@@ -30,7 +31,7 @@ namespace BowlingTests
         [TestCase("X X X X X X X X X X X X")]
         [TestCase("9- 9- 9- 9- 9- 9- 9- 9- 9- 9-")]
         [TestCase("5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/ 5/5")]
-		public void GivenTenFramesOfScores_ThenScoreIsSplitIntoTenFrames(string scores)
+		public void GivenBowlingGame_WhenProvidedTenFramesOfScores_ThenScoreIsSplitIntoTenFrames(string scores)
         {
 	        var bowlingGame = new BowlingGame();
             var listOfScores = bowlingGame.SplitScoresIntoFrames(scores);
